@@ -9,4 +9,5 @@ http://adventofcode.com/2015
     - [Day 4: The Ideal Stocking Stuffer](day04/main.go)
     - [Day 5: Doesn't He Have Intern-Elves For This?](day05/main.go)
     - [Day 6: Probably a Fire Hazard](day06/main.go)
+    - [Day 7: Some Assembly Required](day07/)
         
