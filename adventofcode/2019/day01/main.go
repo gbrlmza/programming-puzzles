@@ -91,7 +91,7 @@ func CalcFuel(mass int) int {
 	fuel := int(math.Floor(float64(mass)/3) - 2)
 	if fuel > 0 {
 		fuel += CalcFuel(fuel)
-	} else if fuel <= 0 {
+	} else {
 		return 0
 	}
 	return fuel
