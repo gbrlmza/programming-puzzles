@@ -111,7 +111,16 @@ func Solve(input []int) (result int) {
 	var previousDepth *int
 	var increases int
 
-	for _, d := range input {
+	var resultList []int
+	for i := range input {
+		if i+2 >= len(input) {
+			break
+		}
+		sum := input[i] + input[i+1] + input[i+2]
+		resultList = append(resultList, sum)
+	}
+
+	for _, d := range resultList {
 		dCopy := d
 		if previousDepth != nil && d > *previousDepth {
 			increases++

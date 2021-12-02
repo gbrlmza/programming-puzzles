@@ -9,7 +9,8 @@ import (
 )
 
 /*
- */
+-- Problem description
+*/
 
 func main() {
 	input := GetInput("input.txt")

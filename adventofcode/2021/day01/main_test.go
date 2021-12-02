@@ -18,7 +18,7 @@ func TestSolve(t *testing.T) {
 			args: args{
 				input: []int{199, 200, 208, 210, 200, 207, 240, 269, 260, 263},
 			},
-			wantResult: 7,
+			wantResult: 5,
 		},
 	}
 	for _, tt := range tests {
