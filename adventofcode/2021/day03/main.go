@@ -150,6 +150,10 @@ func partTwo(input []string) int {
 }
 
 func bitCriteria(mostCommon bool, pos int, input []string) []string {
+	if len(input) <= 1 {
+		return input
+	}
+
 	common := 0
 	for _, num := range input {
 		if string(num[pos]) == "1" {
@@ -171,11 +175,7 @@ func bitCriteria(mostCommon bool, pos int, input []string) []string {
 		}
 	}
 
-	if len(result) > 1 {
-		result = bitCriteria(mostCommon, pos+1, result)
-	}
-
-	return result
+	return bitCriteria(mostCommon, pos+1, result)
 }
 
 func getInput(path string) []string {
