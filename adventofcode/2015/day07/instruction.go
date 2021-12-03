@@ -18,10 +18,11 @@ type Instruction struct {
 
 // Execute instruction
 func (i Instruction) Execute() (out int) {
-	if i.Operator == Literal {
-		out = i.Input[0]
-	} else if i.Operator == Not {
-		out = !i
-	}
-	return out
+	// if i.Operator == Literal {
+	// 	out = i.Input[0]
+	// } else if i.Operator == Not {
+	// 	out = !i
+	// }
+	// return out
+	return 0
 }

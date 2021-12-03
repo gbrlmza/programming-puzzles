@@ -13,24 +13,24 @@ import (
 */
 
 func main() {
-	input := GetInput("input.txt")
+	input := getInput("input.txt")
 
-	resultOne := PartOne(input)
+	resultOne := partOne(input)
 	fmt.Printf("PartOne: %v\n", resultOne)
 
-	resultTwo := PartTwo(input)
+	resultTwo := partTwo(input)
 	fmt.Printf("PartTwo: %v\n", resultTwo)
 }
 
-func PartOne(input []int) (result int) {
+func partOne(input []int) (result int) {
 	return 0
 }
 
-func PartTwo(input []int) (result int) {
+func partTwo(input []int) (result int) {
 	return 0
 }
 
-func GetInput(path string) []int {
+func getInput(path string) []int {
 	result := make([]int, 0)
 
 	file, err := os.Open(path)
