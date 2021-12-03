@@ -22,11 +22,11 @@ func main() {
 	fmt.Printf("PartTwo: %v\n", resultTwo)
 }
 
-func partOne(input []int) (result int) {
+func partOne(input []int) int {
 	return 0
 }
 
-func partTwo(input []int) (result int) {
+func partTwo(input []int) int {
 	return 0
 }
 

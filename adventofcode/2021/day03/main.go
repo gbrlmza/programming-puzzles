@@ -110,7 +110,7 @@ func main() {
 	fmt.Printf("PartTwo: %v\n", resultTwo)
 }
 
-func partOne(input []string) (result int) {
+func partOne(input []string) int {
 	length := len(input[0])
 	common := make([]int, length)
 
@@ -140,7 +140,7 @@ func partOne(input []string) (result int) {
 	return gamma * epsilon
 }
 
-func partTwo(input []string) (result int) {
+func partTwo(input []string) int {
 	oxigenSlice := bitCriteria(true, 0, input)
 	co2Slice := bitCriteria(false, 0, input)
 
