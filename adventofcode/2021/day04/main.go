@@ -21,7 +21,8 @@ func main() {
 
 func partOne(g game) int {
 	for _, n := range g.Numbers {
-		for _, b := range g.Boards {
+		for i := range g.Boards {
+			b := &g.Boards[i]
 			if b.mark(n) {
 				return b.score() * n
 			}
