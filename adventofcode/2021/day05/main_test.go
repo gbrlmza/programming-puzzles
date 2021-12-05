@@ -42,6 +42,11 @@ func Test_getPoints(t *testing.T) {
 			args: args{x1: 3, y1: 10, x2: 0, y2: 7},
 			want: [][]int{{3, 10}, {2, 9}, {1, 8}, {0, 7}},
 		},
+		{
+			name: "non-supported",
+			args: args{x1: 3, y1: 10, x2: 20, y2: 7},
+			want: nil,
+		},
 	}
 	for _, tt := range tests {
 		t.Run(tt.name, func(t *testing.T) {
