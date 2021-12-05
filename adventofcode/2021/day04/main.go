@@ -74,17 +74,19 @@ func getInput(path string) game {
 			}
 			continue
 		}
-		if line == "" {
+
+		if line == "" { // board separator
 			if len(b.Cells) > 0 {
 				g.Boards = append(g.Boards, b)
 			}
-			b = board{
+			b = board{ // initialize new board
 				Cells: make(map[int]cell, boardSize),
 				Marks: make(map[int]int, boardSize),
 			}
 			x = 1
 			continue
 		}
+
 		nums := strings.Split(line, " ")
 		y = 1
 		for _, nStr := range nums {

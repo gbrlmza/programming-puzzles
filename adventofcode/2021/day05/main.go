@@ -6,8 +6,6 @@ import (
 	"log"
 	"math"
 	"os"
-	"strconv"
-	"strings"
 )
 
 // https://adventofcode.com/2021/day/5
@@ -26,8 +24,7 @@ func partOne(input [][]int) int {
 	points := make(map[string]int)
 	for _, l := range input {
 		if l[0] != l[2] && l[1] != l[3] {
-			// we only process vertical & horizontal lines in part one
-			continue
+			continue // we only process vertical & horizontal lines in part one
 		}
 		for _, p := range getPoints(l[0], l[1], l[2], l[3]) {
 			coord := fmt.Sprintf("%d,%d", p[0], p[1])
@@ -57,35 +54,6 @@ func partTwo(input [][]int) int {
 			result++
 		}
 	}
-	return result
-}
-
-func getInput(path string) [][]int {
-	result := make([][]int, 0)
-
-	file, err := os.Open(path)
-	if err != nil {
-		log.Fatal(err)
-	}
-	defer file.Close()
-
-	scanner := bufio.NewScanner(file)
-	for scanner.Scan() {
-		line := scanner.Text()
-		points := strings.Split(line, " -> ")
-		p1 := strings.Split(points[0], ",")
-		p2 := strings.Split(points[1], ",")
-		p1x, _ := strconv.Atoi(p1[0])
-		p1y, _ := strconv.Atoi(p1[1])
-		p2x, _ := strconv.Atoi(p2[0])
-		p2y, _ := strconv.Atoi(p2[1])
-		result = append(result, []int{p1x, p1y, p2x, p2y})
-	}
-
-	if err := scanner.Err(); err != nil {
-		log.Fatal(err)
-	}
-
 	return result
 }
 
@@ -123,5 +91,28 @@ func getPoints(x1, y1, x2, y2 int) [][]int {
 		}
 		i++
 	}
+	return result
+}
+
+func getInput(path string) [][]int {
+	result := make([][]int, 0)
+
+	file, err := os.Open(path)
+	if err != nil {
+		log.Fatal(err)
+	}
+	defer file.Close()
+
+	scanner := bufio.NewScanner(file)
+	for scanner.Scan() {
+		var x1, y1, x2, y2 int
+		fmt.Sscanf(scanner.Text(), "%d,%d -> %d,%d", &x1, &y1, &x2, &y2)
+		result = append(result, []int{x1, y1, x2, y2})
+	}
+
+	if err := scanner.Err(); err != nil {
+		log.Fatal(err)
+	}
+
 	return result
 }
