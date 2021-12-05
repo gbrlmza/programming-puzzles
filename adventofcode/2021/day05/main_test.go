@@ -18,6 +18,11 @@ func Test_getPoints(t *testing.T) {
 		want [][]int
 	}{
 		{
+			name: "single ponint",
+			args: args{x1: 10, y1: 7, x2: 10, y2: 7},
+			want: [][]int{{10, 7}},
+		},
+		{
 			name: "h",
 			args: args{x1: 0, y1: 0, x2: 5, y2: 0},
 			want: [][]int{{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}},
@@ -43,8 +48,13 @@ func Test_getPoints(t *testing.T) {
 			want: [][]int{{3, 10}, {2, 9}, {1, 8}, {0, 7}},
 		},
 		{
-			name: "non-supported",
+			name: "non-supported case 1",
 			args: args{x1: 3, y1: 10, x2: 20, y2: 7},
+			want: nil,
+		},
+		{
+			name: "non-supported case 2",
+			args: args{x1: 3, y1: 10, x2: 0, y2: 3},
 			want: nil,
 		},
 	}
