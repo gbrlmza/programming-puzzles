@@ -89,7 +89,7 @@ func getInput(path string) [][]int {
 }
 
 // getPoints return points between two coordinates (x1,y1) - > (x2,y2)
-// it only work with horizontal, vertical an 45° lines
+// it only works with horizontal, vertical and 45° lines
 // getPoints(0,0,5,0) returns [][]int{{0, 0}, {1, 0}, {2, 0}, {3, 0}, {4, 0}, {5, 0}}
 // getPoints(3,10,0,7) returns [][]int{{3, 10}, {2, 9}, {1, 8}, {0, 7}}
 func getPoints(x1, y1, x2, y2 int) [][]int {
