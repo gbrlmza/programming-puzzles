@@ -25,7 +25,7 @@ func evolve(initialState []int, days int) int {
 		countByDays[d]++
 	}
 
-	var count6, count8, day, count int
+	var count6, count8, day, count, total int
 	for i := 0; i < days; i++ {
 		count6, count8 = countByDays[6], countByDays[8]
 		for day, count = range countByDays {
@@ -47,7 +47,6 @@ func evolve(initialState []int, days int) int {
 		}
 	}
 
-	var total int
 	for _, c := range countByDays {
 		total += c
 	}
