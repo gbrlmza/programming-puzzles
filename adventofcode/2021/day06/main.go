@@ -25,21 +25,21 @@ func evolve(initialState []int, days int) int {
 		countByDays[d]++
 	}
 
+	var count6, count8, day, count int
 	for i := 0; i < days; i++ {
-		originalCountDay8 := countByDays[8]
-		originalCountDay6 := countByDays[6]
-		for day, count := range countByDays {
+		count6, count8 = countByDays[6], countByDays[8]
+		for day, count = range countByDays {
 			switch day {
 			case 0:
 				countByDays[8] += count
 				countByDays[6] += count
 				countByDays[0] = 0
 			case 8:
-				countByDays[8] -= originalCountDay8
-				countByDays[7] = originalCountDay8
+				countByDays[8] -= count8
+				countByDays[7] += count8
 			case 6:
-				countByDays[6] -= originalCountDay6
-				countByDays[5] = originalCountDay6
+				countByDays[6] -= count6
+				countByDays[5] += count6
 			default:
 				countByDays[day] = 0
 				countByDays[day-1] += count
