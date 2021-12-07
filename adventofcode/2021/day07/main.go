@@ -41,9 +41,9 @@ func partTwo(input []int) int {
 	mean = mean / len(input)
 
 	sort.Ints(input)
-	maxDistance := int(math.Abs(float64(mean - input[0])))
-	if math.Abs(float64(mean-input[len(input)-1])) > float64(maxDistance) {
-		maxDistance = int(math.Abs(float64(mean - input[len(input)-1])))
+	maxDistance := mean - input[0]
+	if input[len(input)-1]-mean > maxDistance {
+		maxDistance = input[len(input)-1] - mean
 	}
 	distancesCost := make(map[int]int, maxDistance)
 	for i := 0; i <= maxDistance; i++ {
