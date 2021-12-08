@@ -28,8 +28,8 @@ func partOne(ins []input) int {
 	var count int
 	for _, in := range ins {
 		for _, out := range in.output {
-			d := digits(out)
-			if d != 5 && d != 6 {
+			s := segments(out)
+			if s != 5 && s != 6 {
 				count++
 			}
 		}
@@ -41,12 +41,12 @@ func partTwo(ins []input) int {
 	return 0
 }
 
-func digits(s string) int {
-	digits := make(map[string]struct{}, 7)
-	for _, c := range s {
-		digits[string(c)] = struct{}{}
+func segments(signal string) int {
+	segments := make(map[string]struct{}, 7)
+	for _, c := range signal {
+		segments[string(c)] = struct{}{}
 	}
-	return len(digits)
+	return len(segments)
 }
 
 func getInput(path string) []input {
