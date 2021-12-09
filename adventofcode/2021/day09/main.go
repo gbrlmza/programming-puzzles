@@ -5,6 +5,7 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 	"strconv"
 	"strings"
 )
@@ -33,7 +34,7 @@ func main() {
 func partOne(hm HeightMap) int {
 	var count int
 	for c := range hm {
-		h := hm.isLowpoint(c.x, c.y)
+		h := hm.isLowpoint(c)
 		if h > 0 {
 			count += h
 		}
@@ -41,8 +42,17 @@ func partOne(hm HeightMap) int {
 	return count
 }
 
-func partTwo(in HeightMap) int {
-	return 0
+func partTwo(hm HeightMap) int {
+	sizes := make([]int, 3)
+	for c := range hm {
+		h := hm.isLowpoint(c)
+		if h > 0 {
+			sizes = append(sizes, hm.getBasin(c))
+		}
+	}
+	sort.Ints(sizes)
+	count := len(sizes)
+	return sizes[count-1] * sizes[count-2] * sizes[count-3]
 }
 
 func getCoord(x, y int) coord {
@@ -57,15 +67,51 @@ func (c coord) adjacent() []coord {
 	return coords
 }
 
-func (hm HeightMap) isLowpoint(x, y int) int {
-	coord := getCoord(x, y)
-	height := hm[coord]
-	for _, ac := range coord.adjacent() {
+func (hm HeightMap) copy() HeightMap {
+	new := make(HeightMap, len(hm))
+	for k, v := range hm {
+		new[k] = v
+	}
+	return new
+}
+
+func (hm HeightMap) isLowpoint(c coord) int {
+	height := hm[c]
+	for _, ac := range c.adjacent() {
 		if adjHeight, ok := hm[ac]; ok && adjHeight <= height {
 			return 0
 		}
 	}
 	return height + 1
+}
+
+func (hm HeightMap) getBasin(c coord) int {
+	return getBasinHelper(hm.copy(), c.x, c.y, 0, true, true, true, true)
+}
+
+func getBasinHelper(hm HeightMap, x, y, size int, up, down, left, right bool) int {
+	coord := coord{x: x, y: y}
+	height, ok := hm[coord]
+	if height == 9 || !ok {
+		return size
+	}
+	size++
+	delete(hm, coord)
+
+	if up {
+		size = getBasinHelper(hm, x, y-1, size, true, false, true, true)
+	}
+	if down {
+		size = getBasinHelper(hm, x, y+1, size, false, true, true, true)
+	}
+	if left {
+		size = getBasinHelper(hm, x-1, y, size, true, true, true, false)
+	}
+	if right {
+		size = getBasinHelper(hm, x+1, y, size, true, true, false, true)
+	}
+
+	return size
 }
 
 func getInput(path string) HeightMap {
@@ -78,14 +124,14 @@ func getInput(path string) HeightMap {
 	defer file.Close()
 
 	scanner := bufio.NewScanner(file)
-	var x int
+	var y int
 	for scanner.Scan() {
 		points := strings.Split(scanner.Text(), "")
-		for y, v := range points {
+		for x, v := range points {
 			depth, _ := strconv.Atoi(v)
 			output[getCoord(x, y)] = depth
 		}
-		x++
+		y++
 	}
 
 	if err := scanner.Err(); err != nil {
