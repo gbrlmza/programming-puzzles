@@ -33,6 +33,7 @@ func main() {
 	fmt.Printf("PartTwo: %v\n", resultTwo)
 }
 
+// partOne solution to https://adventofcode.com/2021/day/9
 func partOne(hm heightMap) int {
 	var sum int
 	for loc := range hm {
@@ -44,6 +45,7 @@ func partOne(hm heightMap) int {
 	return sum
 }
 
+// partTwo solution to https://adventofcode.com/2021/day/9#part2
 func partTwo(hm heightMap) int {
 	sizes := make([]int, 3)
 	for loc := range hm {
@@ -87,8 +89,7 @@ func (hm heightMap) getRiskLevel(l location) int {
 	return height + 1
 }
 
-// getBasinSize returns the size of the basin that the provided
-// location belongs to
+// getBasinSize returns the size of the basin that the provided location belongs to
 func (hm heightMap) getBasinSize(c location) int {
 	return calculateBasinSize(hm.copy(), c.x, c.y, 0, true, true, true, true)
 }
@@ -133,8 +134,8 @@ func getInput(path string) heightMap {
 	for scanner.Scan() {
 		points := strings.Split(scanner.Text(), "")
 		for x, v := range points {
-			depth, _ := strconv.Atoi(v)
-			output[location{x: x, y: y}] = depth
+			height, _ := strconv.Atoi(v)
+			output[location{x: x, y: y}] = height
 		}
 		y++
 	}
