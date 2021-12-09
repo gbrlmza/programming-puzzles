@@ -86,15 +86,14 @@ func getPattern(signals []string) map[string]int {
 
 	// knowing segments D/G we can find 0
 	for i, signal := range unknown {
-		comp := complement(sDG, signal)
-		if len(signal) == 6 && len(comp) == 1 {
+		if len(signal) == 6 && len(complement(sDG, signal)) == 1 {
 			pattern[0] = signal
 			unknown = append(unknown[:i], unknown[i+1:]...)
 			break
 		}
 	}
 
-	// we can figure out 6/9 comparing against A & C(number 1)
+	// we can figure out 6/9 comparing against segments A & C(number 1)
 	for _, signal := range unknown {
 		if len(signal) == 6 {
 			if complement(pattern[1], signal) == "" {
