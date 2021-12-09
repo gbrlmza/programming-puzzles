@@ -105,11 +105,11 @@ func (hm heightMap) getRiskLevel(l location) int {
 
 // getBasinSize returns the size of the basin that the provided location belongs to
 func (hm heightMap) getBasinSize(c location) int {
-	return calculateBasinSize(hm.copy(), c.x, c.y, 0, true, true, true, true)
+	return calculateBasinSize(hm.copy(), c.x, c.y, 0)
 }
 
 // calculateBasinSize calculates basin size
-func calculateBasinSize(hm heightMap, x, y, size int, up, down, left, right bool) int {
+func calculateBasinSize(hm heightMap, x, y, size int) int {
 	loc := location{x: x, y: y}
 	height, ok := hm[loc]
 	if height == maxHeight || !ok {
@@ -118,19 +118,10 @@ func calculateBasinSize(hm heightMap, x, y, size int, up, down, left, right bool
 	size++
 	delete(hm, loc)
 
-	if up {
-		size = calculateBasinSize(hm, x, y-1, size, true, false, true, true)
-	}
-	if down {
-		size = calculateBasinSize(hm, x, y+1, size, false, true, true, true)
-	}
-	if left {
-		size = calculateBasinSize(hm, x-1, y, size, true, true, true, false)
-	}
-	if right {
-		size = calculateBasinSize(hm, x+1, y, size, true, true, false, true)
-	}
-
+	size = calculateBasinSize(hm, x, y-1, size)
+	size = calculateBasinSize(hm, x, y+1, size)
+	size = calculateBasinSize(hm, x-1, y, size)
+	size = calculateBasinSize(hm, x+1, y, size)
 	return size
 }
 
