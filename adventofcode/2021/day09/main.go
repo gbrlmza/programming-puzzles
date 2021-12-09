@@ -12,14 +12,16 @@ import (
 
 // https://adventofcode.com/2021/day/9
 
-type HeightMap map[coord]int
+type (
+	heightMap map[location]int
+	location  struct {
+		x int
+		y int
+	}
+)
 
-type coord struct {
-	x int
-	y int
-}
-
-var adj = []coord{{x: 0, y: -1}, {x: -1, y: 0}, {x: +1, y: 0}, {x: 0, y: +1}}
+// adjacent offsets to get adjacent locations
+var adjacent = []location{{x: 0, y: -1}, {x: -1, y: 0}, {x: +1, y: 0}, {x: 0, y: +1}}
 
 func main() {
 	in := getInput("input.txt")
@@ -31,23 +33,23 @@ func main() {
 	fmt.Printf("PartTwo: %v\n", resultTwo)
 }
 
-func partOne(hm HeightMap) int {
-	var count int
-	for c := range hm {
-		h := hm.isLowpoint(c)
-		if h > 0 {
-			count += h
+func partOne(hm heightMap) int {
+	var sum int
+	for loc := range hm {
+		riskLevel := hm.getRiskLevel(loc)
+		if riskLevel > 0 {
+			sum += riskLevel
 		}
 	}
-	return count
+	return sum
 }
 
-func partTwo(hm HeightMap) int {
+func partTwo(hm heightMap) int {
 	sizes := make([]int, 3)
-	for c := range hm {
-		h := hm.isLowpoint(c)
-		if h > 0 {
-			sizes = append(sizes, hm.getBasin(c))
+	for loc := range hm {
+		riskLevel := hm.getRiskLevel(loc)
+		if riskLevel > 0 {
+			sizes = append(sizes, hm.getBasinSize(loc))
 		}
 	}
 	sort.Ints(sizes)
@@ -55,67 +57,70 @@ func partTwo(hm HeightMap) int {
 	return sizes[count-1] * sizes[count-2] * sizes[count-3]
 }
 
-func getCoord(x, y int) coord {
-	return coord{x: x, y: y}
-}
-
-func (c coord) adjacent() []coord {
-	coords := make([]coord, 0, len(adj))
-	for _, a := range adj {
-		coords = append(coords, coord{x: c.x + a.x, y: c.y + a.y})
+// adjacent returns adjacents locations of the current location
+func (l location) adjacent() []location {
+	coords := make([]location, 0, len(adjacent))
+	for _, a := range adjacent {
+		coords = append(coords, location{x: l.x + a.x, y: l.y + a.y})
 	}
 	return coords
 }
 
-func (hm HeightMap) copy() HeightMap {
-	new := make(HeightMap, len(hm))
+// copy returns a copy of the heightMap
+func (hm heightMap) copy() heightMap {
+	new := make(heightMap, len(hm))
 	for k, v := range hm {
 		new[k] = v
 	}
 	return new
 }
 
-func (hm HeightMap) isLowpoint(c coord) int {
-	height := hm[c]
-	for _, ac := range c.adjacent() {
-		if adjHeight, ok := hm[ac]; ok && adjHeight <= height {
+// getRiskLevel returns the risk level of a low point.
+// returns 0 if the provided location isn't a low point
+func (hm heightMap) getRiskLevel(l location) int {
+	height := hm[l]
+	for _, offsets := range l.adjacent() {
+		if adjHeight, ok := hm[offsets]; ok && adjHeight <= height {
 			return 0
 		}
 	}
 	return height + 1
 }
 
-func (hm HeightMap) getBasin(c coord) int {
-	return getBasinHelper(hm.copy(), c.x, c.y, 0, true, true, true, true)
+// getBasinSize returns the size of the basin that the provided
+// location belongs to
+func (hm heightMap) getBasinSize(c location) int {
+	return calculateBasinSize(hm.copy(), c.x, c.y, 0, true, true, true, true)
 }
 
-func getBasinHelper(hm HeightMap, x, y, size int, up, down, left, right bool) int {
-	coord := coord{x: x, y: y}
-	height, ok := hm[coord]
+// calculateBasinSize calculates basin size
+func calculateBasinSize(hm heightMap, x, y, size int, up, down, left, right bool) int {
+	loc := location{x: x, y: y}
+	height, ok := hm[loc]
 	if height == 9 || !ok {
 		return size
 	}
 	size++
-	delete(hm, coord)
+	delete(hm, loc)
 
 	if up {
-		size = getBasinHelper(hm, x, y-1, size, true, false, true, true)
+		size = calculateBasinSize(hm, x, y-1, size, true, false, true, true)
 	}
 	if down {
-		size = getBasinHelper(hm, x, y+1, size, false, true, true, true)
+		size = calculateBasinSize(hm, x, y+1, size, false, true, true, true)
 	}
 	if left {
-		size = getBasinHelper(hm, x-1, y, size, true, true, true, false)
+		size = calculateBasinSize(hm, x-1, y, size, true, true, true, false)
 	}
 	if right {
-		size = getBasinHelper(hm, x+1, y, size, true, true, false, true)
+		size = calculateBasinSize(hm, x+1, y, size, true, true, false, true)
 	}
 
 	return size
 }
 
-func getInput(path string) HeightMap {
-	output := make(HeightMap)
+func getInput(path string) heightMap {
+	output := make(heightMap)
 
 	file, err := os.Open(path)
 	if err != nil {
@@ -129,7 +134,7 @@ func getInput(path string) HeightMap {
 		points := strings.Split(scanner.Text(), "")
 		for x, v := range points {
 			depth, _ := strconv.Atoi(v)
-			output[getCoord(x, y)] = depth
+			output[location{x: x, y: y}] = depth
 		}
 		y++
 	}
