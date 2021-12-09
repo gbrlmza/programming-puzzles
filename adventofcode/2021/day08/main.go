@@ -71,7 +71,7 @@ func getPattern(signals []string) map[string]int {
 		}
 	}
 
-	// of the unkown signals, we can figure out 3 looking at signals with
+	// of the unkown signals, we can figure out 3 by looking at signals with
 	// length 5 and segments A & C(number 1)
 	for i, signal := range unknown {
 		if len(signal) == 5 && complement(pattern[1], signal) == "" {
@@ -81,9 +81,10 @@ func getPattern(signals []string) map[string]int {
 		}
 	}
 
-	// 3 complement 7 give us segment D/G
+	// 3 complement 7 give us segments D/G
 	sDG := complement(pattern[3], pattern[7])
-	// knowing segments D/G we can find 0 and segment D
+
+	// knowing segments D/G we can find 0
 	for i, signal := range unknown {
 		comp := complement(sDG, signal)
 		if len(signal) == 6 && len(comp) == 1 {
@@ -93,7 +94,7 @@ func getPattern(signals []string) map[string]int {
 		}
 	}
 
-	// we can figure out 6/9 comparing against 1 segments
+	// we can figure out 6/9 comparing against A & C(number 1)
 	for _, signal := range unknown {
 		if len(signal) == 6 {
 			if complement(pattern[1], signal) == "" {
@@ -123,6 +124,7 @@ func getPattern(signals []string) map[string]int {
 }
 
 // gets everything that is in A except for anything in its overlap with B
+// info: https://www.purplemath.com/modules/venndiag2.htm
 func complement(a, b string) string {
 	chars := make(map[string]struct{}, 6)
 	for _, c := range a {
