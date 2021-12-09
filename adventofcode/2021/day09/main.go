@@ -12,6 +12,8 @@ import (
 
 // https://adventofcode.com/2021/day/9
 
+const maxHeight = 9
+
 type (
 	heightMap map[location]int
 	location  struct {
@@ -47,6 +49,7 @@ func partOne(hm heightMap) int {
 
 // partTwo solution to https://adventofcode.com/2021/day/9#part2
 func partTwo(hm heightMap) int {
+	// get basins sizes
 	sizes := make([]int, 3)
 	for loc := range hm {
 		riskLevel := hm.getRiskLevel(loc)
@@ -54,9 +57,17 @@ func partTwo(hm heightMap) int {
 			sizes = append(sizes, hm.getBasinSize(loc))
 		}
 	}
+
+	// multiply the 3 largest basins
 	sort.Ints(sizes)
-	count := len(sizes)
-	return sizes[count-1] * sizes[count-2] * sizes[count-3]
+	result := 1
+	for i := len(sizes) - 1; i < 0 || i > len(sizes)-4; i-- {
+		if sizes[i] != 0 {
+			result *= sizes[i]
+		}
+	}
+
+	return result
 }
 
 // adjacent returns adjacents locations of the current location
@@ -80,7 +91,10 @@ func (hm heightMap) copy() heightMap {
 // getRiskLevel returns the risk level of a low point.
 // returns 0 if the provided location isn't a low point
 func (hm heightMap) getRiskLevel(l location) int {
-	height := hm[l]
+	height, ok := hm[l]
+	if !ok || height == maxHeight {
+		return 0
+	}
 	for _, offsets := range l.adjacent() {
 		if adjHeight, ok := hm[offsets]; ok && adjHeight <= height {
 			return 0
@@ -98,7 +112,7 @@ func (hm heightMap) getBasinSize(c location) int {
 func calculateBasinSize(hm heightMap, x, y, size int, up, down, left, right bool) int {
 	loc := location{x: x, y: y}
 	height, ok := hm[loc]
-	if height == 9 || !ok {
+	if height == maxHeight || !ok {
 		return size
 	}
 	size++
