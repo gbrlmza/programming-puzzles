@@ -5,16 +5,23 @@ import (
 	"fmt"
 	"log"
 	"os"
+	"sort"
 )
 
 // https://adventofcode.com/2021/day/10
 
 var (
-	points = map[string]int{
+	missingPoints = map[string]int{
 		")": 3,
 		"]": 57,
 		"}": 1197,
 		">": 25137,
+	}
+	autocompletePoint = map[string]int{
+		")": 1,
+		"]": 2,
+		"}": 3,
+		">": 4,
 	}
 	pairs = map[string]string{
 		"(": ")",
@@ -48,7 +55,7 @@ func partOne(in []string) int {
 				continue
 			} else {
 				if len(stack) == 0 || string(stack[0]) != char {
-					score += points[char]
+					score += missingPoints[char]
 					break
 				} else {
 					stack = stack[1:]
@@ -61,7 +68,40 @@ func partOne(in []string) int {
 
 // part two solution
 func partTwo(in []string) int {
-	return 0
+	var scores []int
+	var partial int
+	var stack, char string
+	var corrupted bool
+	for _, line := range in {
+		stack = ""
+		corrupted = false
+		for _, r := range line {
+			char = string(r)
+			match, isOpening := pairs[char]
+			if isOpening {
+				stack = match + stack
+				continue
+			} else {
+				if len(stack) == 0 || string(stack[0]) != char {
+					corrupted = true
+					break
+				} else {
+					stack = stack[1:]
+				}
+			}
+		}
+		if corrupted {
+			continue
+		}
+		partial = 0
+		for _, r := range stack {
+			char = string(r)
+			partial = partial*5 + autocompletePoint[char]
+		}
+		scores = append(scores, partial)
+	}
+	sort.Ints(scores)
+	return scores[len(scores)/2]
 }
 
 func getInput(path string) []string {
