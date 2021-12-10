@@ -53,14 +53,12 @@ func partOne(in []string) int {
 			if isOpening {
 				stack = match + stack
 				continue
-			} else {
-				if len(stack) == 0 || string(stack[0]) != char {
-					score += missingPoints[char]
-					break
-				} else {
-					stack = stack[1:]
-				}
 			}
+			if len(stack) == 0 || string(stack[0]) != char {
+				score += missingPoints[char]
+				break
+			}
+			stack = stack[1:]
 		}
 	}
 	return score
@@ -81,14 +79,12 @@ func partTwo(in []string) int {
 			if isOpening {
 				stack = match + stack
 				continue
-			} else {
-				if len(stack) == 0 || string(stack[0]) != char {
-					corrupted = true
-					break
-				} else {
-					stack = stack[1:]
-				}
 			}
+			if len(stack) == 0 || string(stack[0]) != char {
+				corrupted = true
+				break
+			}
+			stack = stack[1:]
 		}
 		if corrupted {
 			continue
