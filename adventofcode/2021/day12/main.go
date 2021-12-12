@@ -26,26 +26,27 @@ func main() {
 	resultOne := partOne(getInput("input.txt"))
 	fmt.Printf("PartOne: %v\n", resultOne)
 
-	resultTwo := partTwo(getInput("sample.txt"))
+	resultTwo := partTwo(getInput("input.txt"))
 	fmt.Printf("PartTwo: %v\n", resultTwo)
 }
 
 // part one solution
 func partOne(g grid) int {
-	paths := navigate(g, start, nil)
+	paths := navigate(g, start, nil, true)
 	return len(paths)
 }
 
 // part two solution
 func partTwo(g grid) int {
-	return 0
+	paths := navigate(g, start, nil, false)
+	return len(paths)
 }
 
-func navigate(g grid, caveName string, path []string) []string {
+func navigate(g grid, caveName string, path []string, singleVisit bool) []string {
 	var paths []string
 
 	cave := g[caveName]
-	if !cave.canVisit() {
+	if !g.canVisit(cave, path, singleVisit) {
 		return nil
 	}
 	if cave.name == end {
@@ -58,15 +59,27 @@ func navigate(g grid, caveName string, path []string) []string {
 	cave.visits++
 	g[caveName] = cave
 	for _, conn := range cave.connections {
-		additionalPaths := navigate(g.copy(), conn, path)
+		additionalPaths := navigate(g.copy(), conn, path, singleVisit)
 		paths = append(paths, additionalPaths...)
 	}
 
 	return paths
 }
 
-func (c cave) canVisit() bool {
-	return c.visits == 0 || c.name != strings.ToLower(c.name)
+func (g grid) canVisit(c cave, path []string, singleVisit bool) bool {
+	if (c.name == start || c.name == end) && c.visits != 0 {
+		return false
+	}
+	max := 1
+	if !singleVisit {
+		max = 2
+	}
+	for _, ca := range g {
+		if ca.name == strings.ToLower(ca.name) && ca.visits > 1 {
+			return c.visits == 0 || c.name != strings.ToLower(c.name)
+		}
+	}
+	return c.visits < max || c.name != strings.ToLower(c.name)
 }
 
 func (g grid) copy() grid {
