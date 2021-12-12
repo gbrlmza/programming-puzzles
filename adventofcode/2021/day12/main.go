@@ -20,6 +20,7 @@ type cave struct {
 	name        string
 	connections []string
 	visits      int
+	isBig       bool
 }
 
 func main() {
@@ -68,14 +69,16 @@ func navigate(g grid, caveName string, path []string, singleVisit bool) []string
 
 func (g grid) canVisit(c cave, path []string, singleVisit bool) bool {
 	if singleVisit || c.name == start || c.name == end {
-		return c.visits == 0 || c.name != strings.ToLower(c.name)
+		return c.visits == 0 || c.isBig
 	}
 	for _, ca := range g {
+		// We could store if we already visited a small cave twice in the current path
+		// for performance optimization instead of checking this every time.
 		if ca.name == strings.ToLower(ca.name) && ca.visits > 1 {
-			return c.visits == 0 || c.name != strings.ToLower(c.name)
+			return c.visits == 0 || c.isBig
 		}
 	}
-	return c.visits < 2 || c.name != strings.ToLower(c.name)
+	return c.visits < 2 || c.isBig
 }
 
 func (g grid) copy() grid {
@@ -101,9 +104,11 @@ func getInput(path string) grid {
 		caveA := output[values[0]]
 		caveA.name = values[0]
 		caveA.connections = append(caveA.connections, values[1])
+		caveA.isBig = caveA.name != strings.ToLower(caveA.name)
 		caveB := output[values[1]]
 		caveB.name = values[1]
 		caveB.connections = append(caveB.connections, values[0])
+		caveB.isBig = caveB.name != strings.ToLower(caveB.name)
 		output[caveA.name] = caveA
 		output[caveB.name] = caveB
 	}
