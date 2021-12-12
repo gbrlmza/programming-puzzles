@@ -67,19 +67,15 @@ func navigate(g grid, caveName string, path []string, singleVisit bool) []string
 }
 
 func (g grid) canVisit(c cave, path []string, singleVisit bool) bool {
-	if (c.name == start || c.name == end) && c.visits != 0 {
-		return false
-	}
-	max := 1
-	if !singleVisit {
-		max = 2
+	if singleVisit || c.name == start || c.name == end {
+		return c.visits == 0 || c.name != strings.ToLower(c.name)
 	}
 	for _, ca := range g {
 		if ca.name == strings.ToLower(ca.name) && ca.visits > 1 {
 			return c.visits == 0 || c.name != strings.ToLower(c.name)
 		}
 	}
-	return c.visits < max || c.name != strings.ToLower(c.name)
+	return c.visits < 2 || c.name != strings.ToLower(c.name)
 }
 
 func (g grid) copy() grid {
