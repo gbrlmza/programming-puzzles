@@ -74,7 +74,7 @@ func (g grid) canVisit(c cave, path []string, singleVisit bool) bool {
 	for _, ca := range g {
 		// We could store if we already visited a small cave twice in the current path
 		// for performance optimization instead of checking this every time.
-		if ca.name == strings.ToLower(ca.name) && ca.visits > 1 {
+		if !ca.isBig && ca.visits > 1 {
 			return c.visits == 0 || c.isBig
 		}
 	}
