@@ -56,24 +56,21 @@ func partTwo(g grid) int {
 // fold folds the paper on the provided location (x or y)
 func (g *grid) fold(l loc) {
 	var newX, newY int
-	// move points
-	for y := l.y; y <= g.height; y++ {
-		for x := l.x; x <= g.width; x++ {
-			pLoc := loc{x: x, y: y}
-			if _, ok := g.points[pLoc]; !ok {
-				continue
-			}
-			newX, newY = pLoc.x, pLoc.y
-			if l.x > 0 {
-				newX = g.width - pLoc.x
-			}
-			if l.y > 0 {
-				newY = g.height - pLoc.y
-			}
-			newLoc := loc{x: newX, y: newY}
-			delete(g.points, pLoc)
-			g.points[newLoc] = 1
+	for pLoc := range g.points {
+		if pLoc.x < l.x || pLoc.y < l.y {
+			continue
 		}
+		newX, newY = pLoc.x, pLoc.y
+		if l.x > 0 {
+			newX = g.width - pLoc.x
+		}
+		if l.y > 0 {
+			newY = g.height - pLoc.y
+		}
+		newLoc := loc{x: newX, y: newY}
+		delete(g.points, pLoc)
+		g.points[newLoc] = 1
+
 	}
 	// set new paper width & height
 	if l.x > 0 {
