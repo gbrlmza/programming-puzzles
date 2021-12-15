@@ -12,7 +12,7 @@ import (
 
 type input struct {
 	template   string
-	insertions map[string][]string
+	insertions map[string]string
 }
 type pairs map[string]int
 
@@ -39,11 +39,11 @@ func solve(in input, steps int) int {
 	for i := 0; i < steps; i++ {
 		buffer := make(pairs)
 		for pair, count := range ps {
-			if newPairs, ok := in.insertions[pair]; ok {
-				buffer[newPairs[0]] += count
-				buffer[newPairs[1]] += count
+			if ins, ok := in.insertions[pair]; ok {
+				buffer[string(pair[0])+ins] += count
+				buffer[ins+string(pair[1])] += count
 				if pair == last {
-					last = newPairs[1]
+					last = ins + string(pair[1])
 				}
 				continue
 			}
@@ -91,7 +91,7 @@ func getMostAndLeastCommon(ps pairs, last string) (int, int) {
 
 func getInput(path string) input {
 	in := input{
-		insertions: make(map[string][]string),
+		insertions: make(map[string]string),
 	}
 
 	file, err := os.Open(path)
@@ -111,10 +111,7 @@ func getInput(path string) input {
 			continue
 		}
 		parts := strings.Split(text, " -> ")
-		in.insertions[parts[0]] = []string{
-			string(parts[0][0]) + string(parts[1]),
-			string(parts[1]) + string(parts[0][1]),
-		}
+		in.insertions[parts[0]] = parts[1]
 	}
 
 	if err := scanner.Err(); err != nil {
