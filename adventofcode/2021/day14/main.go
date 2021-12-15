@@ -35,47 +35,38 @@ func partTwo(in input) int {
 }
 
 func solve(in input, steps int) int {
-	ps, last := in.getPairs()
+	ps := in.getPairs()
 	for i := 0; i < steps; i++ {
 		buffer := make(pairs)
 		for pair, count := range ps {
 			if ins, ok := in.insertions[pair]; ok {
 				buffer[string(pair[0])+ins] += count
 				buffer[ins+string(pair[1])] += count
-				if pair == last {
-					last = ins + string(pair[1])
-				}
 				continue
 			}
 			buffer[pair] += count
 		}
 		ps = buffer
 	}
-	most, least := getMostAndLeastCommon(ps, last)
+	most, least := in.getMostAndLeastCommon(ps)
 	return most - least
 }
 
-func (in input) getPairs() (pairs, string) {
-	var lastPair string
+func (in input) getPairs() pairs {
 	p := make(pairs)
 	for i := 0; i < len(in.template)-1; i++ {
 		pair := in.template[i : i+2]
 		p[pair]++
-		lastPair = pair
 	}
-	return p, lastPair
+	return p
 }
 
-func getMostAndLeastCommon(ps pairs, last string) (int, int) {
+func (in input) getMostAndLeastCommon(ps pairs) (int, int) {
 	var most, least string
-	count := make(map[string]int)
-	for pair, n := range ps {
-		if pair == last {
-			// add 1 for the last letter of the last pair
-			// since we are only counting the first letter
-			// of each pair
-			count[string(pair[1])] += 1
-		}
+	count := map[string]int{
+		in.template[len(in.template)-1:]: 1, // +1 for last element
+	}
+	for pair, n := range ps { // count first element of each pair
 		count[string(pair[0])] += n
 	}
 	for elem := range count {
