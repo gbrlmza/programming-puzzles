@@ -12,8 +12,9 @@ import (
 
 type input struct {
 	template   string
-	insertions map[string]string
+	insertions map[string][]string
 }
+type pairs map[string]int
 
 func main() {
 	resultOne := partOne(getInput("input.txt"))
@@ -25,55 +26,57 @@ func main() {
 
 // part one solution
 func partOne(in input) int {
-	var buffer string
-	for i := 0; i < 10; i++ {
-		buffer = in.template[:1]
-		pairs := in.getPairs()
-		for _, pair := range pairs {
-			if insertion, ok := in.insertions[pair]; ok {
-				buffer += fmt.Sprintf("%s%s", insertion, pair[1:])
-			} else {
-				buffer += pair[1:]
-			}
-		}
-		in.template = buffer
-	}
-	most, least := in.getMostAndLeastCommon()
-	return most - least
+	return solve(in, 10)
 }
 
 // part two solution
 func partTwo(in input) int {
-	var buffer string
-	for i := 0; i < 40; i++ {
-		buffer = in.template[:1]
-		pairs := in.getPairs()
-		for _, pair := range pairs {
-			if insertion, ok := in.insertions[pair]; ok {
-				buffer += fmt.Sprintf("%s%s", insertion, pair[1:])
-			} else {
-				buffer += pair[1:]
+	return solve(in, 40)
+}
+
+func solve(in input, steps int) int {
+	ps, last := in.getPairs()
+	for i := 0; i < steps; i++ {
+		buffer := make(pairs)
+		for pair, count := range ps {
+			if newPairs, ok := in.insertions[pair]; ok {
+				buffer[newPairs[0]] += count
+				buffer[newPairs[1]] += count
+				if pair == last {
+					last = newPairs[1]
+				}
+				continue
 			}
+			buffer[pair] += count
 		}
-		in.template = buffer
+		ps = buffer
 	}
-	most, least := in.getMostAndLeastCommon()
+	most, least := getMostAndLeastCommon(ps, last)
 	return most - least
 }
 
-func (in input) getPairs() []string {
-	pairs := []string{}
+func (in input) getPairs() (pairs, string) {
+	var lastPair string
+	p := make(pairs)
 	for i := 0; i < len(in.template)-1; i++ {
-		pairs = append(pairs, in.template[i:i+2])
+		pair := in.template[i : i+2]
+		p[pair]++
+		lastPair = pair
 	}
-	return pairs
+	return p, lastPair
 }
 
-func (in input) getMostAndLeastCommon() (int, int) {
+func getMostAndLeastCommon(ps pairs, last string) (int, int) {
 	var most, least string
 	count := make(map[string]int)
-	for _, r := range in.template {
-		count[string(r)]++
+	for pair, n := range ps {
+		if pair == last {
+			// add 1 for the last letter of the last pair
+			// since we are only counting the first letter
+			// of each pair
+			count[string(pair[1])] += 1
+		}
+		count[string(pair[0])] += n
 	}
 	for elem := range count {
 		if most == "" || count[most] < count[elem] {
@@ -88,7 +91,7 @@ func (in input) getMostAndLeastCommon() (int, int) {
 
 func getInput(path string) input {
 	in := input{
-		insertions: make(map[string]string),
+		insertions: make(map[string][]string),
 	}
 
 	file, err := os.Open(path)
@@ -108,7 +111,10 @@ func getInput(path string) input {
 			continue
 		}
 		parts := strings.Split(text, " -> ")
-		in.insertions[parts[0]] = parts[1]
+		in.insertions[parts[0]] = []string{
+			string(parts[0][0]) + string(parts[1]),
+			string(parts[1]) + string(parts[0][1]),
+		}
 	}
 
 	if err := scanner.Err(); err != nil {
