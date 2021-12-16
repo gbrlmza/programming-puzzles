@@ -21,7 +21,7 @@ type node struct {
 	risk        int
 	connections []string
 }
-type table []row
+type table map[string]row
 type row struct {
 	node     string
 	distance int
@@ -43,17 +43,18 @@ func main() {
 // - https://en.wikipedia.org/wiki/Dijkstra%27s_algorithm
 // - https://www.youtube.com/watch?v=pVfj6mxhdMw
 func partOne(g graph) int {
-	tbl := table{{node: getNodeName(1, 1)}}
+	tbl := table{g.start: {node: getNodeName(1, 1)}}
+	visited := len(g.nodes)
 
 	var newDist int
 	var currNode node
-	for tbl.hasUnvisited() {
+	for visited != 0 {
 		row := tbl.nextNode()
 		row.visited = true
 		currNode = g.nodes[row.node]
 		for _, connName := range currNode.connections {
 			conn := g.nodes[connName]
-			connRow := tbl.get(connName)
+			connRow := tbl[connName]
 			if connRow.visited {
 				continue
 			}
@@ -62,13 +63,14 @@ func partOne(g graph) int {
 				connRow.node = connName
 				connRow.distance = newDist
 				connRow.previous = currNode.name
-				tbl = tbl.set(connRow)
+				tbl[connRow.node] = connRow
 			}
 		}
-		tbl = tbl.set(row)
+		tbl[row.node] = row
+		visited--
 	}
 
-	return tbl.get(g.end).distance
+	return tbl[g.end].distance
 }
 
 // part two solution
@@ -87,35 +89,6 @@ func (t table) nextNode() row {
 		}
 	}
 	return next
-}
-
-func (t table) get(name string) row {
-	for _, r := range t {
-		if r.node == name {
-			return r
-		}
-	}
-	return row{}
-}
-
-func (t table) set(newRow row) table {
-	for i, r := range t {
-		if r.node == newRow.node {
-			t[i] = newRow
-			return t
-		}
-	}
-	t = append(t, newRow)
-	return t
-}
-
-func (t table) hasUnvisited() bool {
-	for _, r := range t {
-		if !r.visited {
-			return true
-		}
-	}
-	return false
 }
 
 func getInput(path string) graph {
